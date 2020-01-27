@@ -1,0 +1,24 @@
+- name: Get packages list
+  package_facts:
+  no_log: yes
+
+- name: Install git
+  yum:
+    name: git
+    state: present
+  when: "'git' not in ansible_facts.packages"
+
+- name: Install EPEL repo
+  yum_repository:
+    name: epel
+    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+    description: EPEL yum repo
+    state: present
+    gpgcheck: yes
+    gpgkey: https://getfedora.org/static/fedora.gpg 
+
+- name: Install package {{ xmlrpc_pkg }}
+  yum:
+    name: "{{ xmlrpc_pkg }}"
+    state: present
+    enablerepo: remi-safe

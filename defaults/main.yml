@@ -1,0 +1,4 @@
+---
+# defaults file for roles/rtorrent-role
+install_nginx: False
+install_php7: False

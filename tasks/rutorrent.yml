@@ -1,0 +1,46 @@
+- name: Check for {{ var_www_directory }} dir
+  stat:
+    path: "{{ var_www_directory }}"
+  register: var_dir
+
+- name: Create group {{ rtorrent_group }}
+  group:
+    name: "{{ rtorrent_group }}"
+    state: present
+
+- name: Create user {{ rtorrent_user }}
+  user:
+    name: "{{ rtorrent_user }}"
+    group: "{{ rtorrent_group }}"
+    state: present
+  register: rtorrent_user_params
+
+- name: Clone rutorrent repo
+  git:
+    repo: "{{ rutorrent_repo }}"
+    dest: "{{ var_www_directory }}"
+    version: v3.9
+  when: not var_dir.stat.exists 
+
+- name: Change directory owner
+  file: 
+    name: "{{ var_www_directory }}"
+    state: directory
+    owner: "{{ rtorrent_user }}"
+    group: php-fpm
+    mode: 0775
+    recurse: yes
+
+- name: Set lines in config.php
+  lineinfile:
+    dest: "{{ var_www_directory }}/conf/config.php"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: '^\s*\$scgi_port', line: "\t$scgi_port = {{ scgi_port.split(':')[1] }};" }
+    - { regexp: '^\s*\$scgi_host', line: "\t$scgi_host = \"{{ scgi_port.split(':')[0] }}\";" }
+
+- name: Add to global PATH curl, stat
+  copy:
+    dest: /etc/profile.d/cust-path.sh
+    content: 'PATH=$PATH:{{ curl_path }}:{{ stat_path }}'

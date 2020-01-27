@@ -1,0 +1,10 @@
+# Pull base img
+FROM williamyeh/ansible:centos7-onbuild
+MAINTAINER slakaw9
+
+#Build
+ENV PLAYBOOK test-role.yml
+ENV INVENTORY inventory
+RUN ansible-playbook-wrapper -v
+
+VOLUME '/data'

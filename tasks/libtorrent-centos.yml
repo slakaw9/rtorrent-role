@@ -1,0 +1,7 @@
+- name: Install package {{ libtorrent_pkg }}
+  yum:
+    name: "{{ libtorrent_pkg }}"
+    state: present
+    enablerepo: epel
+    update_cache: yes
+    allow_downgrade: yes

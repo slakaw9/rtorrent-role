@@ -1,0 +1,22 @@
+- include_vars:
+    dir: vars/
+
+- name: Install for CentOS
+  block:
+    - debug:
+        msg: Installing for {{ ansible_distribution }}
+
+    - name: Install dependencies
+      include_tasks: dep-packages-{{ ansible_distribution | lower }}.yml
+
+    - name: Install libtorrent
+      include_tasks: libtorrent-{{ ansible_distribution | lower }}.yml
+
+    - name: Install ruTorrent
+      include_tasks: rutorrent.yml
+
+    - name: Install rTorrent
+      include_tasks: rtorrent-{{ ansible_distribution | lower }}.yml
+  when: ansible_distribution | lower in 'centos', 'redhat'
+  tags: 
+    - install

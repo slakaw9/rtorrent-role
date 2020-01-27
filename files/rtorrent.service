@@ -1,0 +1,15 @@
+[Unit]
+Description=rTorrent Service
+After=network.target
+
+[Service]
+Type=forking
+KillMode=none
+ExecStart=/usr/bin/screen -d -m -fa -S rtorrent /usr/bin/rtorrent -n -o import=/home/rtorrent/.rtorrent.rc
+ExecStop=pkill /usr/bin/rtorrent
+WorkingDirectory=/home/rtorrent
+User=rtorrent
+Group=rtorrent
+
+[Install]
+WantedBy=multi-user.target

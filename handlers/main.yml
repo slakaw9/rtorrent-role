@@ -1,0 +1,7 @@
+---
+- name: start rtorrent service centos
+  systemd:
+    name: rtorrent
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

@@ -1,0 +1,28 @@
+- name: Install package {{ rtorrent_pkg }}
+  yum:
+    name: "{{ rtorrent_pkg }}"
+    state: present
+    enablerepo: epel
+    update_cache: yes
+    allow_downgrade: yes
+  when: "'rtorrent' not in ansible_facts.packages"
+
+# - debug:
+#     var: rtorrent_user_params
+
+- name: Copy rtorrent.rc file
+  template:
+    src: rtorrent.rc.j2
+    dest: "{{ rtorrent_user_params.home }}/.rtorrent.rc"
+    owner: "{{ rtorrent_user }}"
+    group: "{{ rtorrent_group }}"
+    mode: 0755
+
+- name: Create rtorrent service
+  copy:
+    src: rtorrent.service
+    dest: /usr/lib/systemd/system/rtorrent.service
+    owner: "{{ rtorrent_user }}"
+    group: "{{ rtorrent_group }}"
+    mode: 0644
+  notify: start rtorrent service centos
